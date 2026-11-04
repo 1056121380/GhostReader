@@ -1,0 +1,24 @@
+name: Windows build
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      - name: Build application and regression runner
+        run: dotnet build Tests/GhostReader.Tests.csproj -c Release --nologo
+      - name: Publish Windows x64
+        shell: powershell
+        run: ./scripts/build.ps1
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GhostReader-win-x64
+          path: release/win-x64/
